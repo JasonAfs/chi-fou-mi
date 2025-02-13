@@ -21,8 +21,8 @@ function Login() {
     setIsLoading(true)
 
     try {
-      const token = await loginService(formData.username, formData.password)
-      login(token, { username: formData.username })
+      const { token } = await loginService(formData.username, formData.password)
+      login(token)
       navigate('/game')
     } catch (err) {
       setError(err.message || 'Invalid credentials')

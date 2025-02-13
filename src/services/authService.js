@@ -6,15 +6,15 @@ export const login = async (username, password) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username, password })
   })
 
   if (!response.ok) {
-    throw new Error('Login failed')
+    const error = await response.json()
+    throw new Error(error.message || 'Invalid credentials')
   }
 
-  const data = await response.json()
-  return data.token
+  return response.json()
 }
 
 export const register = async (username, password) => {
@@ -23,15 +23,13 @@ export const register = async (username, password) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username, password })
   })
 
   if (!response.ok) {
-    if (response.status === 409) {
-      throw new Error('User already exists')
-    }
-    throw new Error('Registration failed')
+    const error = await response.json()
+    throw new Error(error.message || 'Registration failed')
   }
 
-  return await response.json()
+  return response.json()
 } 
