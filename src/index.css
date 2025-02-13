@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'gamingFont'; /* Choisissez le nom que vous voulez utiliser */
+  src: url('./assets/fonts/gaming-font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Appliquer la police à toute l'application */
+body {
+  font-family: 'gamingFont', system-ui, sans-serif;
+}
+

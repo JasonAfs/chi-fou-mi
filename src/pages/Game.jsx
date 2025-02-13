@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMatch } from '../contexts/MatchContext'
+import StyledButton from '../components/buttons/StyledButton'
 
 function Game() {
   const { matches, loading, error, fetchMatches, startNewMatch } = useMatch()
@@ -32,12 +33,9 @@ function Game() {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Chifoumi Game</h1>
-          <button
-            onClick={handlePlayClick}
-            className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
-          >
-            Play New Game
-          </button>
+          <StyledButton onClick={handlePlayClick}>
+            PLAY 
+          </StyledButton>
         </div>
 
         {error && (
@@ -66,12 +64,9 @@ function Game() {
                     </p>
                   </div>
                   {!match.winner && (
-                    <button
-                      onClick={() => navigate(`/match/${match._id}`)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-                    >
-                      Continue
-                    </button>
+                    <StyledButton onClick={() => navigate(`/match/${match._id}`)}>
+                      CONTINUE
+                    </StyledButton>
                   )}
                 </div>
               ))}
