@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Game from '../pages/Game'
+import Match from '../pages/Match'
 import Home from '../pages/Home'
 import ProtectedRoute from '../components/ProtectedRoute'
 
@@ -23,6 +24,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Game />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/match/:id',
+    element: (
+      <ProtectedRoute>
+        <Match />
       </ProtectedRoute>
     )
   }
