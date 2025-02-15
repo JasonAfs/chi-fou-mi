@@ -26,8 +26,6 @@ function Match() {
     if (!token) return null
     try {
       const payload = JSON.parse(atob(token.split('.')[1]))
-      console.log('Token payload:', payload)
-      // Assurez-vous que c'est la bonne clé pour l'userId dans le token
       return payload.sub || payload.userId || payload._id
     } catch (err) {
       console.error('Error decoding token:', err)
@@ -61,7 +59,6 @@ function Match() {
   }, [matchId, token])
 
   const handleEvent = useCallback((event) => {
-    console.log('Received event:', event)
     switch (event.type) {
       case 'PLAYER1_JOIN':
       case 'PLAYER2_JOIN':
@@ -70,7 +67,6 @@ function Match() {
       case 'NEW_TURN':
         // Ne pas mettre à jour si le match est terminé
         if (match?.status === 'finished') break
-        console.log('NEW_TURN event - resetting hasPlayedThisTurn')
         setCurrentTurn(event.payload.turnId)
         setHasPlayedThisTurn(false)
         fetchMatch()
@@ -80,10 +76,8 @@ function Match() {
         // Ne pas mettre à jour si le match est terminé
         if (match?.status === 'finished') break
         if (event.type === 'PLAYER1_MOVED' && !isPlayer1) {
-          console.log('Player 1 moved, resetting hasPlayedThisTurn for player 2')
           setHasPlayedThisTurn(false)
         } else if (event.type === 'PLAYER2_MOVED' && isPlayer1) {
-          console.log('Player 2 moved, resetting hasPlayedThisTurn for player 1')
           setHasPlayedThisTurn(false)
         }
         fetchMatch()
@@ -91,13 +85,11 @@ function Match() {
       case 'TURN_ENDED':
         // Ne pas mettre à jour si le match est terminé
         if (match?.status === 'finished') break
-        console.log('Turn ended - resetting state for new turn')
         setCurrentTurn(event.payload.newTurnId)
         setHasPlayedThisTurn(false)
         fetchMatch()
         break
       case 'MATCH_ENDED':
-        console.log('Match ended event:', event.payload)
         setMatch(prevMatch => ({
           ...prevMatch,
           status: 'finished',
@@ -116,17 +108,9 @@ function Match() {
   }, [fetchMatch])
 
   const handleMove = async (move) => {
-    try {
-      console.log('handleMove - before:', {
-        currentTurn,
-        move,
-        hasPlayedThisTurn
-      })
-      
+    try { 
       await playTurn(matchId, currentTurn, move, token)
       setHasPlayedThisTurn(true)
-      
-      console.log('handleMove - after: Move successful')
     } catch (err) {
       console.error('handleMove error:', err)
       setError(err.message)
@@ -137,33 +121,18 @@ function Match() {
   if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>
   if (!match) return <div className="min-h-screen flex items-center justify-center">Match not found</div>
 
-  console.log('Debug match:', {
-    currentUserId,
-    user1Id: match.user1._id,
-    user2Id: match.user2?._id,
-    isPlayer1
-  })
-
   const currentPlayer = isPlayer1 ? match.user1 : match.user2
   const opponent = isPlayer1 ? match.user2 : match.user1
 
   const currentTurnData = match.turns[currentTurn - 1] || {}
   
   const getGameStatus = () => {
-    console.log('getGameStatus - match:', match.status, 'winner:', match.winner)
     if (!match.user2) return "En attente d'un adversaire..."
     if (match.status === 'finished') {
       if (match.winner === null || match.winner === 'draw') return "Match nul !"
       return `${match.winner?.username || match.winner} a gagné la partie !`
     }
     if (!currentTurnData) return "Début d'un nouveau tour..."
-    
-    console.log('Debug turn status:', {
-      isPlayer1,
-      currentTurnData,
-      user1Move: currentTurnData.user1,
-      user2Move: currentTurnData.user2
-    })
     
     const player1HasPlayed = Boolean(currentTurnData.user1)
     const player2HasPlayed = Boolean(currentTurnData.user2)
@@ -188,33 +157,21 @@ function Match() {
   const canPlay = () => {
     // Vérifions d'abord si le match est terminé
     if (match.status === 'finished') {
-      console.log('canPlay: false - match is finished')
       return false
     }
     
     if (!match.user2) {
-      console.log('canPlay: false - no player2')
       return false
     }
 
     const currentTurnData = match.turns[currentTurn - 1] || {}
     
-    console.log('canPlay debug:', {
-      isPlayer1,
-      currentTurn,
-      currentTurnData,
-      hasPlayedThisTurn,
-      matchStatus: match.status
-    })
-    
     if (isPlayer1) {
       const canPlay = !currentTurnData.user1 && !hasPlayedThisTurn
-      console.log('Player 1 canPlay:', canPlay)
       return canPlay
     }
     
     const canPlay = currentTurnData.user1 && !currentTurnData.user2 && !hasPlayedThisTurn
-    console.log('Player 2 canPlay:', canPlay)
     return canPlay
   }
 

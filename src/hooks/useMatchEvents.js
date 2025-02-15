@@ -39,7 +39,6 @@ export const useMatchEvents = (matchId, token, onEvent) => {
             if (line.startsWith('data: ')) {
               try {
                 const data = JSON.parse(line.slice(6))
-                console.log('SSE Event:', data)
                 onEvent(data)
               } catch (error) {
                 console.error('Error parsing SSE data:', error)

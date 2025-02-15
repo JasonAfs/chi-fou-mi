@@ -8,7 +8,6 @@ export const createMatch = async (token) => {
       "Content-Type": "application/json",
     },
   });
-  console.log("createMatch response:", API_URL);
 
   if (!response.ok) {
     const error = await response.json();
